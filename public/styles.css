@@ -1,0 +1,120 @@
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --background-color: #333;
+  --text-color: #34495e;
+  --border-radius: 8px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  background-color: #ffffff;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 100%;
+  max-width: 600px;
+}
+
+h1 {
+  font-family: "Roboto", sans-serif;
+  color: #333;
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+.headerp {
+  text-align: center;
+}
+
+.upload-area {
+  border: 2px dashed var(--primary-color);
+  border-radius: var(--border-radius);
+  padding: 40px;
+  text-align: center;
+  margin-bottom: 30px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-area:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
+.upload-area p {
+  margin-bottom: 15px;
+}
+
+.upload-area input[type="file"] {
+  display: none;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.option {
+  flex: 1;
+  margin: 0 10px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="number"],
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  font-size: 16px;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background-color: var(--secondary-color);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #27ae60;
+}
+
+#imagePreview {
+  max-height: 100px;
+  max-width: 100px;
+}
+
+#imageformat {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
