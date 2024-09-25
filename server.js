@@ -5,6 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const rateLimit = require("express-rate-limit");
 const axios = require("axios");
+const archiver = require("archiver");
 
 const app = express();
 const port = 3000;
@@ -41,8 +42,11 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Set up file upload handling with multer
-const upload = multer({ dest: "uploads/" });
+// Modify the multer setup to handle multiple files
+const upload = multer({
+  dest: "uploads/",
+  limits: { fileSize: 25 * 1024 * 1024 }, // 10MB limit per file
+});
 
 // Serve static files
 app.use(express.static("public"));
@@ -58,6 +62,104 @@ if (!fs.existsSync("public/processed")) {
 }
 
 // APP GET ROUTES
+
+app.post(
+  "/upload-multiple",
+  limiter,
+  upload.array("images", 30),
+  async (req, res) => {
+    //simple logs
+    console.log("--------------------------------");
+    console.log("New multiple file upload request from IP: " + req.ip);
+    console.log("Requests remaining: " + req.rateLimit.remaining);
+    //if no file , err
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).send("No files uploaded.");
+    }
+
+    const format = req.body.format || "webp"; // Default format
+    const width = req.body.width ? parseInt(req.body.width) : null;
+    const height = req.body.height ? parseInt(req.body.height) : null;
+
+    if (
+      (width && (isNaN(width) || width <= 0 || width > 5000)) ||
+      (height && (isNaN(height) || height <= 0 || height > 5000))
+    ) {
+      return res
+        .status(400)
+        .send(
+          "Width and height must be positive integers not exceeding 5000 pixels."
+        );
+    }
+
+    const supportedFormats = ["jpeg", "png", "webp", "avif", "jpg"];
+    if (!supportedFormats.includes(format.toLowerCase())) {
+      return res
+        .status(400)
+        .send(`Supported formats are: ${supportedFormats.join(", ")}`);
+    }
+
+    const zipFilename = `processed_images_${crypto.randomUUID()}.zip`;
+    const zipPath = path.join(__dirname, "public", "processed", zipFilename);
+    const output = fs.createWriteStream(zipPath);
+    const archive = archiver("zip", { zlib: { level: 9 } });
+
+    output.on("close", function () {
+      console.log(archive.pointer() + " total bytes");
+      console.log(
+        "Archiver has been finalized and the output file descriptor has closed."
+      );
+
+      res.download(zipPath, zipFilename, (err) => {
+        if (err) {
+          console.error("Error downloading zip file:", err);
+          res.status(500).send("Error downloading zip file");
+        }
+        // Clean up: delete the zip file and processed images
+        fs.unlinkSync(zipPath);
+        req.files.forEach((file) => fs.unlinkSync(file.path));
+      });
+    });
+
+    archive.on("error", function (err) {
+      throw err;
+    });
+
+    archive.pipe(output);
+
+    try {
+      for (const file of req.files) {
+        const inputPath = file.path;
+        const processedBuffer = await sharp(inputPath)
+          .resize({ width, height })
+          .toFormat(format)
+          .toBuffer();
+
+        archive.append(processedBuffer, {
+          name: `processed_${path.basename(
+            file.originalname,
+            path.extname(file.originalname)
+          )}.${format}`,
+        });
+
+        // Log file sizes and update total saved
+        const originalSize = fs.statSync(inputPath).size;
+        const processedSize = processedBuffer.length;
+        console.log(
+          `File ${file.originalname}: Original size: ${
+            originalSize / 1024
+          } KB, Processed size: ${processedSize / 1024} KB`
+        );
+        addToTotalSaved(originalSize - processedSize);
+      }
+
+      archive.finalize();
+    } catch (error) {
+      console.error("Error processing images:", error);
+      res.status(500).send("Error processing images");
+    }
+  }
+);
 
 app.get("/createuser", (req, res) => {
   var newuserkey = crypto.randomUUID();
