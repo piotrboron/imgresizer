@@ -17,26 +17,16 @@
       <!-- Header -->
       <h1>Image Optimizer</h1>
       <p class="headerp">Lightning fast. No ads, no bs.</p>
-      <button
-        type="button"
-        onclick="showSingleFileForm()"
-        id="chooseSingleFilesBtn"
-      >
-        Single file
-      </button>
-      <button
-        type="button"
-        onclick="showMultipleFileForm()"
-        id="chooseMultiFilesBtn"
-      >
-        Multiple files
-      </button>
-      <!-- form for single file-->
+      <!-- File Upload Section -->
+      <button>Upload Multiple</button>
+      <button>Upload Single</button>
+      <!--image, width, height , format -->
       <form action="/upload" method="post" enctype="multipart/form-data">
         <div>
           <label style="text-align: center; margin: 16px" for="fileInput"
             >Upload your image here:</label
           >
+          <button type="button" id="chooseFileBtn">Choose File</button>
           <input
             type="file"
             id="fileInput"
@@ -89,30 +79,33 @@
             <option value="tiff">.tiff</option>
           </select>
         </div>
+
         <!-- Convert Button -->
         <button type="submit" id="convertBtn" style="display: none">
           Convert & Download
         </button>
       </form>
-      <!-- form for multiple files-->
-      <div class="multipleFileForm" style="display: block">
-        <form
-          action="/upload-multiple"
-          method="post"
-          enctype="multipart/form-data"
-        >
-          <input type="file" name="images" multiple />
-          <input type="text" name="width" placeholder="Width" />
-          <input type="text" name="height" placeholder="Height" />
-          <select name="format">
-            <option value="jpeg">JPEG</option>
-            <option value="png">PNG</option>
-            <option value="webp">WebP</option>
-            <option value="avif">AVIF</option>
-          </select>
-          <button type="submit">Upload and Process</button>
-        </form>
-      </div>
+      <form
+        action="/upload-multiple"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <input type="file" name="images" multiple />
+        <label for="width">Width (px):</label>
+        <input type="text" name="width" placeholder="Width" />
+        <label for="height">Height (px):</label>
+        <input type="text" name="height" placeholder="Height" />
+        <label for="format">Format:</label>
+        <select name="format">
+          <option value="webp">.webp</option>
+          <option value="png">.png</option>
+          <option value="jpg">.jpg</option>
+          <option value="gif">.gif</option>
+          <option value="avif">.avif</option>
+          <option value="tiff">.tiff</option>
+        </select>
+        <button type="submit">Upload and Process</button>
+      </form>
       <div id="result"></div>
       <script>
         // Show file input when 'Choose File' button is clicked
