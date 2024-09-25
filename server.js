@@ -12,6 +12,10 @@ const port = 3000;
 // TODO
 //zapytac o kartoniki
 
+function testFunction() {
+  console.log("test");
+}
+
 // variables
 var totalSaved = 0;
 
