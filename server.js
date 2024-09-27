@@ -10,17 +10,11 @@ const archiver = require("archiver");
 const app = express();
 const port = 3000;
 
-// TODO
-//zapytac o kartoniki
-
-function testFunction() {
-  console.log("test");
-}
-
 // variables
 var totalSaved = 0;
 
-//api keys
+//this is a fake api key
+//real one should be in .env
 const masterKey = "42743428-ce90-4941-9ddb-784e2aed091f";
 
 // Middleware to check for valid API key
@@ -42,17 +36,17 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Modify the multer setup to handle multiple files
+// multer, multiple files
 const upload = multer({
   dest: "uploads/",
-  limits: { fileSize: 25 * 1024 * 1024 }, // 10MB limit per file
+  limits: { fileSize: 30 * 1024 * 1024 }, // 30MB limit per file
 });
 
-// Serve static files
+// static files
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
-// Ensure necessary directories exists
+// ensure necessary directories exists
 if (!fs.existsSync("uploads")) {
   fs.mkdirSync("uploads");
 }
@@ -115,7 +109,7 @@ app.post(
           console.error("Error downloading zip file:", err);
           res.status(500).send("Error downloading zip file");
         }
-        // Clean up: delete the zip file and processed images
+        // cleaning: delete the zip file and processed images
         fs.unlinkSync(zipPath);
         req.files.forEach((file) => fs.unlinkSync(file.path));
       });
@@ -142,7 +136,7 @@ app.post(
           )}.${format}`,
         });
 
-        // Log file sizes and update total saved
+        // log file sizes and update total saved
         const originalSize = fs.statSync(inputPath).size;
         const processedSize = processedBuffer.length;
         console.log(
@@ -164,7 +158,7 @@ app.post(
 app.get("/createuser", (req, res) => {
   var newuserkey = crypto.randomUUID();
   res.send(newuserkey);
-  //db query here
+  //WORK IN PROGRESS
 });
 
 app.get("/api/optimizer", requireApiKey, async (req, res) => {
@@ -207,7 +201,7 @@ app.get("/api/optimizer", requireApiKey, async (req, res) => {
       .send("Image URL, width, height, and format are required.");
   }
 
-  // glowne dzialanie
+  // main thing
   try {
     const response = await axios({
       url: imgurl,
@@ -235,7 +229,7 @@ app.post("/upload", limiter, upload.single("image"), async (req, res) => {
   //log ratelimit
   console.log("Requests remaining: " + req.rateLimit.remaining);
 
-  // Check if file is uploaded
+  // check if file is uploaded
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }
@@ -293,10 +287,10 @@ app.post("/upload", limiter, upload.single("image"), async (req, res) => {
       }
     );
 
-    // Delete the original uploaded file
+    // clean the original uploaded file
     fs.unlinkSync(inputPath);
 
-    // Use res.download to send the file
+    // res.download to send the file to user
     res.download(outputPath, outputFilename, (err) => {
       if (err) {
         console.error("Error downloading file:", err);

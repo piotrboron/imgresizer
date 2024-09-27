@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Image Resizer & WebP Converter</title>
+    <title>Image Resizer</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,8 +18,12 @@
       <h1>Image Optimizer</h1>
       <p class="headerp">Lightning fast. No ads, no bs.</p>
       <!-- File Upload Section -->
-      <button onclick="showMultipleForm()">Upload Multiple</button>
-      <button onclick="showSingleForm()">Upload Single</button>
+      <button class="uploadMultipleBtn" onclick="showMultipleForm()">
+        Upload Multiple
+      </button>
+      <button class="uploadSingleBtn" onclick="showSingleForm()">
+        Upload Single
+      </button>
       <!--image, width, height , format -->
       <!-- Upload Single Form -->
       <div class="uploadSingleForm" style="display: none">
@@ -82,13 +86,13 @@
             </select>
           </div>
 
-          <!-- Convert Button -->
+          <!-- convert btn -->
           <button type="submit" id="convertBtn" style="display: none">
             Convert & Download
           </button>
         </form>
       </div>
-      <!-- Upload Multiple Form -->
+      <!-- multiple upload form -->
       <div class="uploadMultipleForm" style="display: none">
         <form
           action="/upload-multiple"
@@ -97,9 +101,9 @@
         >
           <input type="file" name="images" multiple />
           <label for="width">Width (px):</label>
-          <input type="text" name="width" placeholder="Width" />
+          <input type="text" name="width" placeholder="Auto" />
           <label for="height">Height (px):</label>
-          <input type="text" name="height" placeholder="Height" />
+          <input type="text" name="height" placeholder="Auto" />
           <label for="format">Format:</label>
           <select name="format">
             <option value="webp">.webp</option>
@@ -109,7 +113,7 @@
             <option value="avif">.avif</option>
             <option value="tiff">.tiff</option>
           </select>
-          <button type="submit">Upload and Process</button>
+          <button type="submit">Optimize and zip it!</button>
         </form>
       </div>
       <div id="result"></div>
@@ -123,14 +127,14 @@
           document.querySelector(".uploadSingleForm").style.display = "block";
           document.querySelector(".uploadMultipleForm").style.display = "none";
         }
-        // Show file input when 'Choose File' button is clicked
+        //show file input when 'Choose File' button is clicked
         document
           .getElementById("chooseFileBtn")
           .addEventListener("click", function () {
             document.getElementById("fileInput").click();
           });
 
-        // Detect when an image file is uploaded
+        // detect when an image file is uploaded
         document
           .getElementById("fileInput")
           .addEventListener("change", function (event) {
@@ -139,7 +143,7 @@
             const imagePreview = document.getElementById("imagePreview");
             //if there is file uploaded
             if (file) {
-              // Display file information
+              // Display file information -- pre-converted
               const fileInfo = `Your image: ${
                 file.name
               }<br>File Size before conversion: ${(file.size / 1024).toFixed(
@@ -153,9 +157,9 @@
                 imagePreview.src = e.target.result;
                 imagePreview.style.display = "block";
               };
-              reader.readAsDataURL(file); // Convert the image to a data URL
+              reader.readAsDataURL(file); // convert the image to a data URL
 
-              // Make options and buttons visible after image is uploaded
+              // make options and buttons visible after a thing is uploaded
               document.getElementById("resizeOptions").style.display = "block";
               document.getElementById("formatOptions").style.display = "block";
               document.getElementById("convertBtn").style.display = "block";

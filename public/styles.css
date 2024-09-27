@@ -118,3 +118,15 @@ button:hover {
   margin-top: 16px;
   margin-bottom: 16px;
 }
+
+.uploadMultipleBtn {
+  background-color: #607d8b;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.uploadSingleBtn {
+  background-color: #607d8b;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
